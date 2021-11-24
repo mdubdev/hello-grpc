@@ -12,11 +12,13 @@ run:
 	go run main.go
 
 docker-build: build
-	docker build --build-arg VERSION=${VERSION} -t mwilliamsdev/hello-grpc:${VERSION} .
-	@echo "to push image execute:\ndocker push mwilliamsdev/hello-grpc:${VERSION}\n"
+	docker build --build-arg VERSION=${VERSION} -t mdubdev/hello-grpc:${VERSION} .
 
 docker-run: docker-build
 	docker stop hello-grpc || true && docker rm hello-grpc || true
-	docker run --name hello-grpc -d -p 9090:9090 mwilliamsdev/hello-grpc
+	docker run --name hello-grpc -d -p 9090:9090 mdubdev/hello-grpc
 
-.PHONY: generate build run docker-build docker-run
+docker-push: docker-build
+	docker push mdubdev/hello-grpc:${VERSION}
+
+.PHONY: generate build run docker-build docker-run docker-push
