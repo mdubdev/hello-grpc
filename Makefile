@@ -1,26 +1,22 @@
-include .env
 include version
 
 generate:
-	-rm bin/*.pb.go
-	-rm -r /tmp/hello-grpc
-	-mkdir /tmp/hello-grpc
-
-	protoc hello.proto --go_out=plugins=grpc:/tmp/hello-grpc/
-	cp /tmp/hello-grpc/hello.pb.go bin/
-
-.PHONY generate
+	protoc hello.proto --go_out=plugins=grpc:/${HOME}/go/bin/
 
 build: generate
-	-rm -r bin
-	mkdir -p bin
-
-	GOOS=linux CGO_ENABLED=0 go build -o bin/api main.go
-
-.PHONY build
+	rm bin/*
+	GOOS=linux go build -o bin/api main.go
 
 run:
-	HELLOGRPC_HOST=:9090
+	export HELLOGRPC_HOST=:9090
 	go run main.go
 
-.PHONY run
+docker-build: build
+	docker build --build-arg VERSION=${VERSION} -t mwilliamsdev/hello-grpc:${VERSION} .
+	@echo "to push image execute:\ndocker push mwilliamsdev/hello-grpc:${VERSION}\n"
+
+docker-run: docker-build
+	docker stop hello-grpc || true && docker rm hello-grpc || true
+	docker run --name hello-grpc -d -p 9090:9090 mwilliamsdev/hello-grpc
+
+.PHONY: generate build run docker-build docker-run
