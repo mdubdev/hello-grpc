@@ -2,31 +2,26 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"net"
-	"os"
 
 	"hello"
 
+	"github.com/kelseyhightower/envconfig"
 	"google.golang.org/grpc"
 )
 
 type Config struct {
-	Port string `json:"port"`
+	Host string `envconfig:"HOST" required:"true" default:"9090"`
 }
 
 func getConfig() Config {
-	var config Config
-	file, err := os.Open("config.json")
+	config := Config{}
 
-	defer file.Close()
-
+	err := envconfig.Process("HELLOGRPC", &config)
 	if err != nil {
-		panic("failed to load configuration")
+		log.Fatal(err)
 	}
-
-	json.NewDecoder(file).Decode(&config)
 
 	return config
 }
@@ -34,7 +29,7 @@ func getConfig() Config {
 func main() {
 	config := getConfig()
 
-	lis, err := net.Listen("tcp", ":"+config.Port)
+	lis, err := net.Listen("tcp", config.Host)
 
 	if err != nil {
 		log.Fatal(err)
@@ -43,7 +38,7 @@ func main() {
 	server := grpc.NewServer()
 	hello.RegisterHelloServiceServer(server, &helloServiceServer{})
 
-	log.Printf("listening for insecure gRPC requests on port %s", config.Port)
+	log.Printf("listening for insecure gRPC requests on at %s", config.Host)
 
 	if err := server.Serve(lis); err != nil {
 		log.Fatal(err)
