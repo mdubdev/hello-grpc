@@ -1,2 +1,2 @@
-ghz -c 1 -n 1 --insecure --proto ~/Source/Personal/hello-grpc/hello.proto --call hello.HelloService.GetMessage -d '{}' :9090
-ghz -c 1 -n 1 --insecure --proto ~/Source/Personal/hello-grpc/hello.proto --call hello.HelloService.GenerateLoad -d '{}' :9090
+ghz -c 1 -n 1 --insecure --proto ~/Source/Personal/hello-grpc/hello.proto --call pb.HelloService.GetMessage -d '{}' :9090
+ghz -c 1 -n 1 --insecure --proto ~/Source/Personal/hello-grpc/hello.proto --call pb.HelloService.GenerateLoad -d '{}' :9090

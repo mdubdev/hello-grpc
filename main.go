@@ -7,6 +7,7 @@ import (
 	"net"
 
 	"hello"
+	"pb"
 
 	"github.com/kelseyhightower/envconfig"
 	"google.golang.org/grpc"
@@ -36,7 +37,7 @@ func main() {
 	}
 
 	server := grpc.NewServer()
-	hello.RegisterHelloServiceServer(server, &helloServiceServer{})
+	pb.RegisterHelloServiceServer(server, &helloServiceServer{})
 
 	log.Printf("listening for gRPC requests on %s", config.Host)
 
@@ -46,23 +47,25 @@ func main() {
 }
 
 type helloServiceServer struct {
-	hello.HelloServiceServer
+	pb.HelloServiceServer
 }
 
-func (s *helloServiceServer) GetMessage(ctx context.Context, req *hello.Nothing) (*hello.HelloResponse, error) {
-	log.Printf("gRPC request received")
+func (s *helloServiceServer) GetMessage(ctx context.Context, req *pb.Nothing) (*pb.HelloResponse, error) {
+	log.Printf("gRPC request received: GetMessage")
 
-	return &hello.HelloResponse{
-		Message: "Hello, gRPC!",
+	return &pb.HelloResponse{
+		Message: hello.HelloGrpc(),
 	}, nil
 }
 
-func (s *helloServiceServer) GenerateLoad(ctx context.Context, req *hello.Nothing) (*hello.Nothing, error) {
+func (s *helloServiceServer) GenerateLoad(ctx context.Context, req *pb.Nothing) (*pb.Nothing, error) {
+	log.Printf("gRPC request received: GenerateLoad")
+
 	x := 0.0001
 
 	for i := 0; i <= 1000000; i++ {
 		x = x + math.Sqrt(x)
 	}
 
-	return &hello.Nothing{}, nil
+	return &pb.Nothing{}, nil
 }

@@ -3,7 +3,10 @@ include version
 generate:
 	protoc hello.proto --go_out=plugins=grpc:${GOBIN}
 
-build: generate
+test:
+	go test hello
+
+build: generate test
 	rm -f bin/*
 	GOOS=linux go build -o bin/api main.go
 
@@ -21,4 +24,4 @@ docker-run: docker-build
 docker-push: docker-build
 	docker push mdubdev/hello-grpc:${VERSION}
 
-.PHONY: generate build run docker-build docker-run docker-push
+.PHONY: generate test build run docker-build docker-run docker-push
