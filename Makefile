@@ -1,7 +1,7 @@
 include version
 
 generate:
-	protoc hello.proto --go_out=plugins=grpc:/${HOME}/go/bin/
+	protoc hello.proto --go_out=plugins=grpc:${GOBIN}
 
 build: generate
 	rm -f bin/*
