@@ -4,7 +4,7 @@ generate:
 	protoc hello.proto --go_out=plugins=grpc:/${HOME}/go/bin/
 
 build: generate
-	rm bin/*
+	rm -f bin/*
 	GOOS=linux go build -o bin/api main.go
 
 run:

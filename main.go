@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"math"
 	"net"
 
 	"hello"
@@ -28,7 +29,7 @@ func getConfig() Config {
 
 func main() {
 	config := getConfig()
-	lis, err := net.Listen("tcp4", config.Host)
+	lis, err := net.Listen("tcp", config.Host)
 
 	if err != nil {
 		log.Fatal(err)
@@ -48,10 +49,20 @@ type helloServiceServer struct {
 	hello.HelloServiceServer
 }
 
-func (s *helloServiceServer) GetMessage(ctx context.Context, req *hello.HelloRequest) (*hello.HelloResponse, error) {
+func (s *helloServiceServer) GetMessage(ctx context.Context, req *hello.Nothing) (*hello.HelloResponse, error) {
 	log.Printf("gRPC request received")
 
 	return &hello.HelloResponse{
 		Message: "Hello, gRPC!",
 	}, nil
+}
+
+func (s *helloServiceServer) GenerateLoad(ctx context.Context, req *hello.Nothing) (*hello.Nothing, error) {
+	x := 0.0001
+
+	for i := 0; i <= 1000000; i++ {
+		x = x + math.Sqrt(x)
+	}
+
+	return &hello.Nothing{}, nil
 }

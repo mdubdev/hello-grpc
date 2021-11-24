@@ -8,9 +8,10 @@ message HelloResponse {
     string message = 1;
 }
 
-message HelloRequest {
+message Nothing {
 }
 
 service HelloService {
-    rpc GetMessage(HelloRequest) returns (HelloResponse);
+    rpc GetMessage(Nothing) returns (HelloResponse) {}
+    rpc GenerateLoad(Nothing) returns (Nothing) {}
 }
